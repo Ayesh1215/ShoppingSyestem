@@ -1,6 +1,7 @@
-package com.shopping.ShoppingSyestem.Config;
-import com.shopping.ShoppingSyestem.Application.Employee;
-import com.shopping.ShoppingSyestem.JpaRespository.EmployeeRespository;
+package com.shopping.ShoppingSyestem.Service;
+
+import com.shopping.ShoppingSyestem.Model.Employee;
+import com.shopping.ShoppingSyestem.Repository.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -8,23 +9,24 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 public class EmployeeDetailsService implements UserDetailsService {
 
     @Autowired
-    private EmployeeRespository employeeRepository;
+    private EmployeeRepository employeeRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Employee employee = employeeRepository.findByUsername(username);
+        Employee employee = employeeRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-        Set<GrantedAuthority> authorities = employee.getRoles().stream()
-                .map((role) -> new SimpleGrantedAuthority(role.getName()))
-                .collect(Collectors.toSet());
 
+        Set<GrantedAuthority> authorities = Set.of(
+                new SimpleGrantedAuthority(employee.getRoles().getName())
+        );
         return new org.springframework.security.core.userdetails.User(
                 username,
                 employee.getPassword(),

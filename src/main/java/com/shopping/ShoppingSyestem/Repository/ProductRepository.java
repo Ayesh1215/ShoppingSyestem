@@ -1,13 +1,15 @@
-package com.shopping.ShoppingSyestem.JpaRespository;
-import com.shopping.ShoppingSyestem.Application.Product;
+package com.shopping.ShoppingSyestem.Repository;
+
+import com.shopping.ShoppingSyestem.Model.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
 @Repository
-public interface ProductRespository extends JpaRepository<Product, Integer> {
+public interface ProductRepository extends JpaRepository<Product, Long> {
 
     Product findByName(String name);
+
     Optional<Product> findById(Integer id);
 }

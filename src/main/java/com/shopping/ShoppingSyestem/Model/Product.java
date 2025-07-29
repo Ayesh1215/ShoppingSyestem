@@ -1,25 +1,34 @@
-package com.shopping.ShoppingSyestem.Application;
+package com.shopping.ShoppingSyestem.Model;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.shopping.ShoppingSyestem.Service.OrderProduct;
 import jakarta.persistence.*;
+
+import java.util.List;
 
 @Entity
 public class Product {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
     private String name;
     private Integer price;
     private Integer quantity;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "shop_id", nullable = false)
-    private  Shop shop;
+    private Shop shop;
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    @JsonManagedReference(value = "product-orderproduct")
+    private List<OrderProduct> orderProducts;
+
     public Product() {
     }
 
-    public Integer getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -49,5 +58,13 @@ public class Product {
 
     public void setShop(Shop shop) {
         this.shop = shop;
+    }
+
+    public Shop getShop() {
+        return shop;
+    }
+
+    public List<OrderProduct> getOrderProducts() {
+        return orderProducts;
     }
 }
